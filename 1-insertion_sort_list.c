@@ -1,41 +1,49 @@
 #include "sort.h"
 
 /**
- * insertion_sort_list - Sorts a doubly linked list of integers in
- *                       ascending order using the Insertion sort algorithm.
- *
- * @list: Pointer to the head of the doubly linked list
+ * node-swap - Swap two nodes in a doubly-linked list.
+ * @h: A pointer to the head of the doubly-linked list.
+ * @n1: A pointer to the first node to swap.
+ * @n2: The second node to swap.
  */
-
-void insertion_sort_list(listint_t **list)
+void node-swap(listint_t **h, listint_t **n1, listint_t *n2)
 {
-    if (list == NULL || *list == NULL || (*list)->next == NULL)
-        return;
+	(*n1)->next = n2->next;
+	if (n2->next != NULL)
+		n2->next->prev = *n1;
 
-    listint_t *curr = (*list)->next;
-    listint_t *prev, *next;
+	n2->prev = (*n1)->prev;
+	n2->next = *n1;
+	if ((*n1)->prev != NULL)
+		(*n1)->prev->next = n2;
 
-    while (curr != NULL)
-    {
-        prev = curr->prev;
-        while (prev != NULL && prev->n > curr->n)
-        {
-            next = curr->next;
-            if (prev->prev != NULL)
-                prev->prev->next = curr;
-            else
-                *list = curr;
-            curr->prev = prev->prev;
-            curr->next = prev;
-            prev->prev = curr;
-            prev->next = next;
-            if (next != NULL)
-                next->prev = prev;
-
-            prev = curr->prev;
-            print_list(*list);
-        }
-        curr = curr->next;
-    }
+	else
+		*h = n2;
+	(*n1)->prev = n2;
+	*n1 = n2->prev;
 }
 
+/**
+ * insertion_sort_list - Sorts a doubly linked list of integers
+ *                       using the insertion sort algorithm.
+ * @list: A pointer to the head of a doubly-linked list of integers.
+ *
+ */
+void insertion_sort_list(listint_t **list)
+{
+	listint_t *iter, *insert, *temp;
+
+	if (list == NULL || *list == NULL || (*list)->next == NULL)
+		return;
+
+	for (iter = (*list)->next; iter != NULL; iter = temp)
+	{
+		temp = iter->next;
+		insert = iter->prev;
+		while (insert != NULL && iter->n < insert->n)
+		{
+			node-swap(list, &insert, iter);
+			print_list((const listint_t *)*list);
+		}
+	}
+}
